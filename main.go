@@ -1,14 +1,18 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
-	"github.org/pablanka/go-backend-template/router"
+	"github.com/pablanka/go-backend-template/router"
 )
 
-func main() {
-	r := router.NewRouter()
+var addr = flag.String("addr", ":8080", "http service address")
 
+func main() {
+	flag.Parse()
+
+	r := router.NewRouter()
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

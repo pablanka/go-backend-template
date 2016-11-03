@@ -8,12 +8,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Logger(inner http.Handler, name string) http.Handler {
+// Route defines a route structure
+type Route struct {
+	Name        string
+	Method      string
+	Pattern     string
+	HandlerFunc http.HandlerFunc
+}
+
+//Routes is an array of routes
+type Routes []*Route
+
+// wrapLog wraps a log on route's handler func
+func wrapLog(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-
 		inner.ServeHTTP(w, r)
-
 		log.Printf(
 			"%s\t%s\t%s\t%s",
 			r.Method,
@@ -24,47 +34,18 @@ func Logger(inner http.Handler, name string) http.Handler {
 	})
 }
 
-//NewRouter create a new Router for the project
+// NewRouter creates a new Router with all cofigured routes
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
-
-		var handler http.Handler
-
-		handler = route.HandlerFunc
-
-		handler = modules.Logger(handler, route.Name)
+	for _, route := range routes { // creates a router for each route.
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
-			Handler(route.HandlerFunc)
+			Handler(wrapLog(route.HandlerFunc, route.Name))
 	}
+
+	//router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+
 	return router
-}
-
-// Route the routes structure
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
-}
-
-//Routes is an array of routes
-type Routes []Route
-
-var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"/",
-		handlers.Index,
-	},
-	Route{
-		"Convert",
-		"POST",
-		"/convert",
-		handlers.ImageConvert,
-	},
 }
