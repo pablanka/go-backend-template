@@ -44,8 +44,5 @@ func NewRouter() *mux.Router {
 			Name(route.Name).
 			Handler(wrapLog(route.HandlerFunc, route.Name))
 	}
-
-	//router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
-
 	return router
 }
