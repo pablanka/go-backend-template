@@ -19,6 +19,8 @@ type Route struct {
 //Routes is an array of routes
 type Routes []*Route
 
+type mytype string
+
 // wrapLog wraps a log on route's handler func
 func wrapLog(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

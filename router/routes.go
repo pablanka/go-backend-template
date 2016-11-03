@@ -15,4 +15,16 @@ var routes = Routes{
 		"/webapp",
 		handlers.Webapp,
 	},
+	&Route{
+		"GETUser",
+		"GET",
+		"/api/user.json",
+		handlers.GETUser,
+	},
+	&Route{
+		"POSTUser",
+		"POST",
+		"/api/user",
+		handlers.POSTUser,
+	},
 }
