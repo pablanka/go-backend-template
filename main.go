@@ -14,5 +14,5 @@ func main() {
 	flag.Parse()
 
 	r := router.NewRouter()
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(*addr, r))
 }
