@@ -14,6 +14,7 @@ type Route struct {
 	Method      string
 	Pattern     string
 	HandlerFunc http.HandlerFunc
+	IsStatic    bool
 }
 
 //Routes is an array of routes
@@ -22,7 +23,7 @@ type Routes []*Route
 type mytype string
 
 // wrapLog wraps a log on route's handler func
-func wrapLog(inner http.Handler, name string) http.Handler {
+func logWrapper(inner http.Handler, name string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		inner.ServeHTTP(w, r)
@@ -40,11 +41,19 @@ func wrapLog(inner http.Handler, name string) http.Handler {
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes { // creates a router for each route.
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(wrapLog(route.HandlerFunc, route.Name))
+		if route.IsStatic {
+			router.
+				Methods(route.Method).
+				PathPrefix(route.Pattern).
+				Name(route.Name).
+				Handler(logWrapper(route.HandlerFunc, route.Name))
+		} else {
+			router.
+				Methods(route.Method).
+				Path(route.Pattern).
+				Name(route.Name).
+				Handler(logWrapper(route.HandlerFunc, route.Name))
+		}
 	}
 	return router
 }

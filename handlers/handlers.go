@@ -29,9 +29,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	templates.ParseNExecute(w, map[string]string{"Name": "go-backend-template"}, "./templates/template.html")
 }
 
-// Webapp handles demo web app
+/*// Webapp handles demo web app
 func Webapp(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./statics/webapp/angular-demo.html")
+}*/
+
+//Statics statics files entry point
+func Statics(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-cache")
+	http.ServeFile(w, r, "./statics/"+r.URL.Path)
 }
 
 // REST APIs ----------------------------------------------------------------------------------------------------
